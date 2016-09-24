@@ -26,9 +26,10 @@ class BaseFinder implements FinderInterface
 
     public function getRecordById($id): ActiveRecordInterface
     {
-        $selectByIdStatement = $this->pdoConnection->query('select * from ' . $this->tableName .' where id = :id');
-        $selectByIdStatement->setFetchMode(\PDO::FETCH_CLASS, $this->activeRecordClass, [$this->pdoConnection]);
+        $selectByIdStatement = $this->pdoConnection->query('select * from ' . $this->tableName . ' where id = :id');
         $selectByIdStatement->execute([$id]);
-        return $selectByIdStatement->fetch();
+        $rowData = $selectByIdStatement->fetch(\PDO::FETCH_ASSOC);
+        $recordClass = $this->activeRecordClass;
+        return call_user_func([$recordClass, 'populate'], $this->pdoConnection, $rowData);
     }
 }

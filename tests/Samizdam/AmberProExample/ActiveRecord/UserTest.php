@@ -3,41 +3,12 @@
 namespace Samizdam\AmberProExample\ActiveRecord;
 
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
-use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 
 /**
  * @author samizdam <samizdam@inbox.ru>
  */
-class UserTest extends \PHPUnit_Extensions_Database_TestCase
+class UserTest extends AbstractDbTestCase
 {
-
-    private $pdoConnection;
-
-    public function __construct($name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->pdoConnection = new \PDO('sqlite::memory:');
-        $this->pdoConnection->query(<<<SQL
-            CREATE TABLE user (
-               id INTEGER PRIMARY KEY AUTOINCREMENT,
-               login VARCHAR(255) NOT NULL UNIQUE,
-               email VARCHAR(255) NOT NULL ,
-               password_hash VARCHAR(60) NOT NULL
-   );
-SQL
-        );
-    }
-
-    /**
-     * Returns the test database connection.
-     *
-     * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
-     */
-    protected function getConnection()
-    {
-        return $this->createDefaultDBConnection($this->pdoConnection);
-    }
-
     /**
      * Returns the test dataset.
      *
@@ -70,5 +41,14 @@ SQL
         $user = User::getFinder($this->pdoConnection)->getRecordById(1);
         $user->delete();
         $this->assertTableRowCount('user', 0);
+    }
+
+    public function testSaveOnExistsRecord()
+    {
+        $user = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $user->login = 'Octocat';
+        $user->save();
+        $userAfterSave = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $this->assertEquals('Octocat', $userAfterSave->login);
     }
 }

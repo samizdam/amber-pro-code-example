@@ -19,6 +19,16 @@ class User implements ActiveRecordInterface
         $this->pdoConnection = $pdoConnection;
     }
 
+    public static function populate(\PDO $pdoConnection, array $fields)
+    {
+        $record = new self($pdoConnection);
+        foreach ($fields as $fieldName => $value) {
+            $record->$fieldName = $value;
+        }
+        $record->isPersisted = true;
+        return $record;
+    }
+
     public function delete()
     {
         $deleteSqlStringPattern = 'delete from %s where id = :id';
@@ -30,7 +40,13 @@ class User implements ActiveRecordInterface
     public function save()
     {
         if ($this->isPersisted()) {
-
+            $updateStatement = $this->pdoConnection->prepare("update `user` 
+              set 
+                login = :login, 
+                email = :email, 
+                password_hash = :password_hash
+              where id = :id");
+            $updateStatement->execute([$this->login, $this->email, $this->password_hash, $this->id]);
         } else {
             $insertStatement = $this->pdoConnection->prepare("insert into `user` 
               (login, email, password_hash) values (:login, :email, :password_hash)");
