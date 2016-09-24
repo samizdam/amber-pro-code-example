@@ -1,0 +1,27 @@
+{
+    "name": "samizdam/amber-pro-code-example",
+    "description": "Code for review in Amber.pro.",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^5.5",
+        "phpunit/dbunit": "^2.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "samizdam",
+            "email": "samizdam@inbox.ru"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Samizdam\\": "src/Samizdam/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Samizdam\\": "tests/Samizdam/"
+        }
+    }
+}
