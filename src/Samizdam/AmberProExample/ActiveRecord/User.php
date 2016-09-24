@@ -44,6 +44,11 @@ class User extends AbstractActiverRecord
         return 'user';
     }
 
+    public static function getPrimaryKeyColumns(): array
+    {
+        return ['id'];
+    }
+
     public static function getFinder(\PDO $pdoConnection): FinderInterface
     {
         return new BaseFinder($pdoConnection, static::class);

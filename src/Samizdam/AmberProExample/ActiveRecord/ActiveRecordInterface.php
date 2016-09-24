@@ -10,6 +10,8 @@ interface ActiveRecordInterface
 
     public static function getTableName(): string;
 
+    public static function getPrimaryKeyColumns(): array;
+
     public function isPersisted(): bool;
 
     public function delete();

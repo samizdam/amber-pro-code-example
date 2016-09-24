@@ -25,7 +25,7 @@ class BaseFinderTest extends AbstractDbTestCase
     public function testGetRecordByIdWithAnotherConnection()
     {
         $finder = new BaseFinder($this->pdoConnection, User::class);
-        $record = $finder->getRecordById(1, new \PDO('sqlite::memory:'));
+        $record = $finder->getRecordByPK(1, new \PDO('sqlite::memory:'));
         $this->assertNotSame($this->pdoConnection, $record->getConnection());
     }
 }

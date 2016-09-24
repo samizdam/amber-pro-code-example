@@ -36,23 +36,23 @@ class UserTest extends AbstractDbTestCase
         $user->password_hash = 'some_hash';
         $user->email = 'amba@com';
         $user->save();
-        $newPersistedUser = User::getFinder($this->pdoConnection)->getRecordById(2);
+        $newPersistedUser = User::getFinder($this->pdoConnection)->getRecordByPK(2);
         $this->assertEquals('Amba', $newPersistedUser->login);
     }
 
     public function testDelete()
     {
-        $user = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $user = User::getFinder($this->pdoConnection)->getRecordByPK(1);
         $user->delete();
         $this->assertTableRowCount('user', 0);
     }
 
     public function testSaveOnExistsRecord()
     {
-        $user = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $user = User::getFinder($this->pdoConnection)->getRecordByPK(1);
         $user->login = 'Octocat';
         $user->save();
-        $userAfterSave = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $userAfterSave = User::getFinder($this->pdoConnection)->getRecordByPK(1);
         $this->assertEquals('Octocat', $userAfterSave->login);
     }
 }
