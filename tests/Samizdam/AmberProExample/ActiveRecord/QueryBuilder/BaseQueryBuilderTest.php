@@ -15,4 +15,12 @@ class BaseQueryBuilderTest extends \PHPUnit_Framework_TestCase
         $expected = 'INSERT INTO `user` (`name`) VALUES (:name)';
         $this->assertEquals($expected, $sql);
     }
+
+    public function testBuildSelectQuery()
+    {
+        $queryBuilder = new BaseQueryBuilder();
+        $sql = $queryBuilder->buildSelectAllQuery('user', ['id']);
+        $expected = 'SELECT * FROM `user` WHERE 1 AND `id` = :id';
+        $this->assertEquals($expected, $sql);
+    }
 }

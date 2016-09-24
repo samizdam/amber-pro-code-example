@@ -31,4 +31,15 @@ class BaseQueryBuilder implements QueryBuilderInterface
         $insertSqlString = sprintf($insertPattern, $tableName, $columnsPart, $valuesPart);
         return $insertSqlString;
     }
+
+    public function buildSelectAllQuery(string $tableName, array $whereColumns): string
+    {
+        $selectPattern = 'SELECT * FROM `%s` WHERE 1 %s';
+        $wherePart = array_reduce($whereColumns, function ($sql, $columnName) {
+            $sql .= 'AND `' . $columnName . '` = :' . $columnName;
+            return $sql;
+        });
+        $selectSql = sprintf($selectPattern, $tableName, $wherePart);
+        return $selectSql;
+    }
 }

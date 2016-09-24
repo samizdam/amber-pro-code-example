@@ -2,6 +2,8 @@
 
 namespace Samizdam\AmberProExample\ActiveRecord;
 
+use Samizdam\AmberProExample\ActiveRecord\QueryBuilder\QueryBuilderFactory;
+
 /**
  * @author samizdam <samizdam@inbox.ru>
  */
@@ -16,21 +18,24 @@ class BaseFinder implements FinderInterface
      */
     private $activeRecordClass;
     private $tableName;
+    private $queryBuilder;
 
     public function __construct(\PDO $pdoConnection, string $activeRecordClass)
     {
         $this->pdoConnection = $pdoConnection;
         $this->activeRecordClass = $activeRecordClass;
         $this->tableName = call_user_func([$activeRecordClass, 'getTableName']);
+        $this->queryBuilder = QueryBuilderFactory::getQueryBuilder($this->pdoConnection);
     }
 
-    public function getRecordById($id, \PDO $pdoConnection = null): ActiveRecordInterface
+    public function getRecordById($id, \PDO $recordInstansPdoConnection = null): ActiveRecordInterface
     {
-        $selectByIdStatement = $this->pdoConnection->query('select * from ' . $this->tableName . ' where id = :id');
+        $selectSql = $this->queryBuilder->buildSelectAllQuery($this->tableName, ['id']);
+        $selectByIdStatement = $this->pdoConnection->query($selectSql);
         $selectByIdStatement->execute([$id]);
         $rowData = $selectByIdStatement->fetch(\PDO::FETCH_ASSOC);
         $recordFactory = [$this->activeRecordClass, 'populate'];
-        $pdoConnection = $pdoConnection ?: $this->pdoConnection;
-        return call_user_func($recordFactory, $pdoConnection, $rowData);
+        $recordInstansPdoConnection = $recordInstansPdoConnection ?: $this->pdoConnection;
+        return call_user_func($recordFactory, $recordInstansPdoConnection, $rowData);
     }
 }
