@@ -15,10 +15,12 @@ abstract class AbstractActiverRecord implements ActiveRecordInterface
      */
     private $pdoConnection;
     private $isPersisted = false;
+    private $queryBuilder;
 
     public function __construct(\PDO $pdoConnection)
     {
         $this->pdoConnection = $pdoConnection;
+        $this->queryBuilder = QueryBuilderFactory::getQueryBuilder($this->getConnection());
     }
 
     public static function populate(\PDO $pdoConnection, array $fields)
@@ -31,6 +33,11 @@ abstract class AbstractActiverRecord implements ActiveRecordInterface
         return $record;
     }
 
+    public static function getFinder(\PDO $pdoConnection): FinderInterface
+    {
+        return new BaseFinder($pdoConnection, static::class);
+    }
+
     protected function toArray(): array
     {
         return (new Hydrator())->hydrate($this);
@@ -38,19 +45,26 @@ abstract class AbstractActiverRecord implements ActiveRecordInterface
 
     public function save()
     {
-        $queryBuilder = QueryBuilderFactory::getQueryBuilder($this->getConnection());
         $recordFields = static::toArray();
         $columnsNames = array_keys($recordFields);
         if ($this->isPersisted()) {
-            $updateSql = $queryBuilder->buildUpdateQuery(static::getTableName(), $columnsNames,
+            $updateSql = $this->queryBuilder->buildUpdateQuery(static::getTableName(), $columnsNames,
                 static::getPrimaryKeyColumns());
             $updateStatement = $this->getConnection()->prepare($updateSql);
             $updateStatement->execute($recordFields);
         } else {
-            $insertSql = $queryBuilder->buildInsertQuery(static::getTableName(), $columnsNames);
+            $insertSql = $this->queryBuilder->buildInsertQuery(static::getTableName(), $columnsNames);
             $insertStatement = $this->getConnection()->prepare($insertSql);
             $insertStatement->execute($recordFields);
         }
+    }
+
+    public function delete()
+    {
+        $deleteSqlString = $this->queryBuilder->buildDeleteQuery(static::getTableName(),
+            static::getPrimaryKeyColumns());
+        $deleteStatement = $this->getConnection()->prepare($deleteSqlString);
+        $deleteStatement->execute([$this->id]);
     }
 
     public function getConnection(): \PDO

@@ -35,10 +35,7 @@ class BaseQueryBuilder implements QueryBuilderInterface
     public function buildSelectAllQuery(string $tableName, array $whereColumns): string
     {
         $selectPattern = 'SELECT * FROM `%s` WHERE 1 %s';
-        $wherePart = array_reduce($whereColumns, function ($sql, $columnName) {
-            $sql .= 'AND `' . $columnName . '` = :' . $columnName;
-            return $sql;
-        });
+        $wherePart = $this->buildWherePart($whereColumns);
         $selectSql = sprintf($selectPattern, $tableName, $wherePart);
         return $selectSql;
     }
@@ -46,19 +43,32 @@ class BaseQueryBuilder implements QueryBuilderInterface
     public function buildUpdateQuery(string $tableName, array $setColumns, array $whereColumns): string
     {
         $updatePattern = 'UPDATE `%s` SET %s WHERE 1 %s';
-        $setPart = array_reduce($setColumns, function($sql, $columnName){
-            if($sql == '') {
+        $setPart = array_reduce($setColumns, function ($sql, $columnName) {
+            if ($sql == '') {
                 $sql .= '`' . $columnName . '` = :' . $columnName;
             } else {
                 $sql .= ', `' . $columnName . '` = :' . $columnName;
             }
             return $sql;
         });
-        $wherePart = array_reduce($whereColumns, function ($sql, $columnName) {
+        $wherePart = $this->buildWherePart($whereColumns);
+        $updateSql = sprintf($updatePattern, $tableName, $setPart, $wherePart);
+        return $updateSql;
+    }
+
+    public function buildDeleteQuery(string $tableName, array $whereColumns): string
+    {
+        $deletePattern = 'DELETE FROM `%s` WHERE 1 %s';
+        $wherePart = $this->buildWherePart($whereColumns);
+        $deleteSql = sprintf($deletePattern, $tableName, $wherePart);
+        return $deleteSql;
+    }
+
+    private function buildWherePart(array $whereColumns): string
+    {
+        return array_reduce($whereColumns, function ($sql, $columnName) {
             $sql .= 'AND `' . $columnName . '` = :' . $columnName;
             return $sql;
         });
-        $updateSql = sprintf($updatePattern, $tableName, $setPart, $wherePart);
-        return $updateSql;
     }
 }

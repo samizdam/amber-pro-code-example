@@ -31,4 +31,12 @@ class BaseQueryBuilderTest extends \PHPUnit_Framework_TestCase
         $expected = 'UPDATE `user` SET `name` = :name WHERE 1 AND `id` = :id';
         $this->assertEquals($expected, $sql);
     }
+
+    public function testBuildDeleteQuery()
+    {
+        $queryBuilder = new BaseQueryBuilder();
+        $sql = $queryBuilder->buildDeleteQuery('user', ['id']);
+        $expected = 'DELETE FROM `user` WHERE 1 AND `id` = :id';
+        $this->assertEquals($expected, $sql);
+    }
 }
