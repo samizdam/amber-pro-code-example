@@ -32,8 +32,12 @@ class UserTest extends AbstractDbTestCase
     {
         $this->assertTableRowCount('user', 1);
         $user = new User($this->pdoConnection);
+        $user->login = 'Amba';
+        $user->password_hash = 'some_hash';
+        $user->email = 'amba@com';
         $user->save();
-        $this->assertTableRowCount('user', 2);
+        $newPersistedUser = User::getFinder($this->pdoConnection)->getRecordById(2);
+        $this->assertEquals('Amba', $newPersistedUser->login);
     }
 
     public function testDelete()

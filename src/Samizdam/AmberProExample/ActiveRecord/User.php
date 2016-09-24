@@ -2,6 +2,8 @@
 
 namespace Samizdam\AmberProExample\ActiveRecord;
 
+use Samizdam\AmberProExample\ActiveRecord\QueryBuilder\BaseQueryBuilder;
+
 /**
  * @author samizdam <samizdam@inbox.ru>
  */
@@ -27,9 +29,12 @@ class User extends AbstractActiverRecord
               where id = :id");
             $updateStatement->execute([$this->login, $this->email, $this->password_hash, $this->id]);
         } else {
-            $insertStatement = $this->getConnection()->prepare("insert into `user` 
-              (login, email, password_hash) values (:login, :email, :password_hash)");
-            $insertStatement->execute(['fooLogin', 'fooEmail', 'someHask']);
+            $recordFields = get_object_vars($this);
+            $columnsNames = array_keys($recordFields);
+            $queryBuilder = new BaseQueryBuilder();
+            $insertSql = $queryBuilder->buildInsertQuery(static::getTableName(), $columnsNames);
+            $insertStatement = $this->getConnection()->prepare($insertSql);
+            $insertStatement->execute($recordFields);
         }
     }
 
