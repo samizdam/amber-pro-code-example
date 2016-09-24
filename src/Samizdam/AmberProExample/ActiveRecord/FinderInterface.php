@@ -11,5 +11,5 @@ interface FinderInterface
     /**
      * Get AR instance with optional custom PDO connection.
      */
-    public function getRecordByPK($pkValue, \PDO $recordInstansPdoConnection = null): ActiveRecordInterface;
+    public function getRecordByPK($pkValue, \PDO $recordInstancePdoConnection = null): ActiveRecordInterface;
 }

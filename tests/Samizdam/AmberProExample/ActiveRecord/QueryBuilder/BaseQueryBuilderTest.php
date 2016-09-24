@@ -16,11 +16,19 @@ class BaseQueryBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $sql);
     }
 
-    public function testBuildSelectQuery()
+    public function testBuildSelectAllQuery()
     {
         $queryBuilder = new BaseQueryBuilder();
         $sql = $queryBuilder->buildSelectAllQuery('user', ['id']);
         $expected = 'SELECT * FROM `user` WHERE 1 AND `id` = :id';
+        $this->assertEquals($expected, $sql);
+    }
+
+    public function testBuildUpdateQuery()
+    {
+        $queryBuilder = new BaseQueryBuilder();
+        $sql = $queryBuilder->buildUpdateQuery('user', ['name'], ['id']);
+        $expected = 'UPDATE `user` SET `name` = :name WHERE 1 AND `id` = :id';
         $this->assertEquals($expected, $sql);
     }
 }

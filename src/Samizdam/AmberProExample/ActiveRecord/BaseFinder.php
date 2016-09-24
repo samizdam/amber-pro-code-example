@@ -30,14 +30,14 @@ class BaseFinder implements FinderInterface
         $this->queryBuilder = QueryBuilderFactory::getQueryBuilder($this->pdoConnection);
     }
 
-    public function getRecordByPK($pkValue, \PDO $recordInstansPdoConnection = null): ActiveRecordInterface
+    public function getRecordByPK($pkValue, \PDO $recordInstancePdoConnection = null): ActiveRecordInterface
     {
         $selectSql = $this->queryBuilder->buildSelectAllQuery($this->tableName, $this->primaryKeyColumns);
         $selectByIdStatement = $this->pdoConnection->query($selectSql);
         $selectByIdStatement->execute([$pkValue]);
         $rowData = $selectByIdStatement->fetch(\PDO::FETCH_ASSOC);
         $recordFactory = [$this->activeRecordClass, 'populate'];
-        $recordInstansPdoConnection = $recordInstansPdoConnection ?: $this->pdoConnection;
-        return call_user_func($recordFactory, $recordInstansPdoConnection, $rowData);
+        $recordInstancePdoConnection = $recordInstancePdoConnection ?: $this->pdoConnection;
+        return call_user_func($recordFactory, $recordInstancePdoConnection, $rowData);
     }
 }

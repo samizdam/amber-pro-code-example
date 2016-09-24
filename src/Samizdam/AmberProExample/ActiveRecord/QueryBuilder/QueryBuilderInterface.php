@@ -11,4 +11,6 @@ interface QueryBuilderInterface
     public function buildInsertQuery(string $tableName, array $columns): string;
 
     public function buildSelectAllQuery(string $tableName, array $whereColumns): string;
+
+    public function buildUpdateQuery(string $tableName, array $setColumns, array $whereColumns): string;
 }

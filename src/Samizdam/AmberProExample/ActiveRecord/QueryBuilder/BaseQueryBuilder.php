@@ -42,4 +42,23 @@ class BaseQueryBuilder implements QueryBuilderInterface
         $selectSql = sprintf($selectPattern, $tableName, $wherePart);
         return $selectSql;
     }
+
+    public function buildUpdateQuery(string $tableName, array $setColumns, array $whereColumns): string
+    {
+        $updatePattern = 'UPDATE `%s` SET %s WHERE 1 %s';
+        $setPart = array_reduce($setColumns, function($sql, $columnName){
+            if($sql == '') {
+                $sql .= '`' . $columnName . '` = :' . $columnName;
+            } else {
+                $sql .= ', `' . $columnName . '` = :' . $columnName;
+            }
+            return $sql;
+        });
+        $wherePart = array_reduce($whereColumns, function ($sql, $columnName) {
+            $sql .= 'AND `' . $columnName . '` = :' . $columnName;
+            return $sql;
+        });
+        $updateSql = sprintf($updatePattern, $tableName, $setPart, $wherePart);
+        return $updateSql;
+    }
 }
