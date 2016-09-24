@@ -3,6 +3,7 @@
 namespace Samizdam\AmberProExample\ActiveRecord;
 
 use Samizdam\AmberProExample\ActiveRecord\QueryBuilder\BaseQueryBuilder;
+use Samizdam\AmberProExample\ActiveRecord\QueryBuilder\QueryBuilderFactory;
 
 /**
  * @author samizdam <samizdam@inbox.ru>
@@ -20,6 +21,7 @@ class User extends AbstractActiverRecord
 
     public function save()
     {
+        $queryBuilder = QueryBuilderFactory::getQueryBuilder($this->getConnection());
         if ($this->isPersisted()) {
             $updateStatement = $this->getConnection()->prepare("update `user` 
               set 
@@ -31,7 +33,6 @@ class User extends AbstractActiverRecord
         } else {
             $recordFields = get_object_vars($this);
             $columnsNames = array_keys($recordFields);
-            $queryBuilder = new BaseQueryBuilder();
             $insertSql = $queryBuilder->buildInsertQuery(static::getTableName(), $columnsNames);
             $insertStatement = $this->getConnection()->prepare($insertSql);
             $insertStatement->execute($recordFields);
