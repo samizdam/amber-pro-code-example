@@ -21,12 +21,15 @@ class User implements ActiveRecordInterface
 
     public function delete()
     {
-        // TODO: Implement delete() method.
+        $deleteSqlStringPattern = 'delete from %s where id = :id';
+        $deleteSqlString = sprintf($deleteSqlStringPattern, $this->getTableName());
+        $deleteStatement = $this->pdoConnection->prepare($deleteSqlString);
+        $deleteStatement->execute([$this->id]);
     }
 
     public function save()
     {
-        if($this->isPersisted()) {
+        if ($this->isPersisted()) {
 
         } else {
             $insertStatement = $this->pdoConnection->prepare("insert into `user` 
@@ -38,5 +41,15 @@ class User implements ActiveRecordInterface
     public function isPersisted(): bool
     {
         return $this->isPersisted;
+    }
+
+    public static function getTableName(): string
+    {
+        return 'user';
+    }
+
+    public static function getFinder(\PDO $pdoConnection): FinderInterface
+    {
+        return new BaseFinder($pdoConnection, static::class);
     }
 }

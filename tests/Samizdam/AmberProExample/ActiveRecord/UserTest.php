@@ -64,4 +64,11 @@ SQL
         $user->save();
         $this->assertTableRowCount('user', 2);
     }
+
+    public function testDelete()
+    {
+        $user = User::getFinder($this->pdoConnection)->getRecordById(1);
+        $user->delete();
+        $this->assertTableRowCount('user', 0);
+    }
 }

@@ -8,9 +8,13 @@ namespace Samizdam\AmberProExample\ActiveRecord;
 interface ActiveRecordInterface
 {
 
+    public static function getTableName(): string;
+
     public function isPersisted(): bool;
 
     public function delete();
 
     public function save();
+
+    public static function getFinder(\PDO $pdoConnection): FinderInterface;
 }
