@@ -8,5 +8,8 @@ namespace Samizdam\AmberProExample\ActiveRecord;
 interface FinderInterface
 {
 
-    public function getRecordById($id): ActiveRecordInterface;
+    /**
+     * Get AR instance with optional custom PDO connection.
+     */
+    public function getRecordById($id, \PDO $pdoConnection = null): ActiveRecordInterface;
 }

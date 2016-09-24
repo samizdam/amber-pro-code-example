@@ -37,4 +37,12 @@ SQL
         return $this->createDefaultDBConnection($this->pdoConnection);
     }
 
+    /**
+     * Empty data set.
+     * Override this for use some data set in concrete test case.
+     */
+    protected function getDataSet()
+    {
+        return $this->createArrayDataSet([]);
+    }
 }

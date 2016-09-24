@@ -24,12 +24,13 @@ class BaseFinder implements FinderInterface
         $this->tableName = call_user_func([$activeRecordClass, 'getTableName']);
     }
 
-    public function getRecordById($id): ActiveRecordInterface
+    public function getRecordById($id, \PDO $pdoConnection = null): ActiveRecordInterface
     {
         $selectByIdStatement = $this->pdoConnection->query('select * from ' . $this->tableName . ' where id = :id');
         $selectByIdStatement->execute([$id]);
         $rowData = $selectByIdStatement->fetch(\PDO::FETCH_ASSOC);
-        $recordClass = $this->activeRecordClass;
-        return call_user_func([$recordClass, 'populate'], $this->pdoConnection, $rowData);
+        $recordFactory = [$this->activeRecordClass, 'populate'];
+        $pdoConnection = $pdoConnection ?: $this->pdoConnection;
+        return call_user_func($recordFactory, $pdoConnection, $rowData);
     }
 }

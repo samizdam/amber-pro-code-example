@@ -17,4 +17,6 @@ interface ActiveRecordInterface
     public function save();
 
     public static function getFinder(\PDO $pdoConnection): FinderInterface;
+
+    public function getConnection(): \PDO;
 }
